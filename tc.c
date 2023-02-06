@@ -396,6 +396,18 @@ static void update_info(rt_info *rti)
 	return;
 }
 
+static int result(rt_info *rti)
+{
+	clear();
+	refresh();
+	WINDOW * w = newwin(10, 20, LINES / 2 - 5, COLS / 2 - 10);
+	box( w, 0, 0 );
+	wbkgd(w, COLOR_PAIR(5));
+	int ch;
+	while ( (ch = wgetch(w)) != 'q');
+	return 1;
+}
+
 static int loop(set *s)
 {
 	cbreak();
@@ -471,12 +483,12 @@ static int loop(set *s)
 			case 11:	/* Tabulator */
 			{
 				endwin();
-				return 1;
+				return result(rti);
 			};
 			case 27:	/* Escape */
 			{
 				endwin();
-				return 1;;
+				return result(rti);
 				//quit(rti, true, NULL)
 			};
 			case 127: /* Backspace */
