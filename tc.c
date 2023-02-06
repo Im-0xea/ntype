@@ -88,6 +88,7 @@ char         dic   [1000][100];
 size_t       dic_s = 0;
 char         kmp   [30];
 unsigned int thm   [7]   [3];
+unsigned int gamecounter = 0;
 
 
 static void set_color(const color c)
@@ -162,6 +163,7 @@ static void rectangle(int y1, int x1, int y2, int x2)
 
 static void load_dict(const char *path)
 {
+	dic_s = 0;
 	FILE *fp = fopen(path, "r");
 	if (!fp) return;
 	while(fgets(dic[dic_s], 100, fp)) strip_newline(dic[dic_s++]);
@@ -421,7 +423,7 @@ static int loop(set *s)
 	bfs = &bfs_o;
 	rti = &rti_o;
 	
-	srand((uint) time(NULL));
+	srand((uint) time(NULL) + gamecounter++);
 	curses_init();
 	ctl = 0;
 	do
@@ -468,11 +470,14 @@ static int loop(set *s)
 			};
 			case 11:	/* Tabulator */
 			{
-				return 0;
+				endwin();
+				return 1;
 			};
 			case 27:	/* Escape */
 			{
-				quit(rti, true, NULL);
+				endwin();
+				return 1;;
+				//quit(rti, true, NULL)
 			};
 			case 127: /* Backspace */
 			{
@@ -551,7 +556,7 @@ static int menu()
 		.stall = true,
 		.stay = false
 	};
-	curses_init();
+	clear();
 	wbkgd(stdscr, COLOR_PAIR(5));
 	refresh();
 	load_dict("dicts/en.dic");
@@ -606,7 +611,7 @@ static int menu()
 			case '\n':
 				s_o.gm = words_count;
 				s_o.words = 25;
-				loop(&s_o);
+				return loop(&s_o);
 				break;
 		}
 		
@@ -722,6 +727,7 @@ int main(const int argc, char **argv)
 	
 	load_thm("themes/monokai.theme");
 	load_kmp("keymaps/dvorak.kmp");
-	menu();
+	curses_init();
+	while (menu());
 	return 0;
 }
