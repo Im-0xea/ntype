@@ -403,8 +403,12 @@ static int result(rt_info *rti)
 	WINDOW * w = newwin(10, 20, LINES / 2 - 5, COLS / 2 - 10);
 	box( w, 0, 0 );
 	wbkgd(w, COLOR_PAIR(5));
+	unsigned long time_elps = (unsigned long) time(NULL) - rti->start_time;
+	double wpm = (double) 60 * ( (double) (rti->cp / 5) / (double) time_elps);
+	mvwprintw(w, 1, 1, "wpm: %.2f", wpm);
+	mvwprintw(w, 2, 1, "time: %d", time_elps);
 	int ch;
-	while ( (ch = wgetch(w)) != 'q');
+	while ( (ch = wgetch(w)) != '\n');
 	return 1;
 }
 
@@ -468,7 +472,7 @@ static int loop(set *s)
 		
 		last = c;
 		hi = false;
-		if (s->gm == words_count && rti->current_word == s->words) quit(rti, true, NULL);
+		if (s->gm == words_count && rti->current_word == s->words) return result(rti);
 		input_loop(rti, bfs, s, &c, last, wcc_off);
 		wcc_off += (strlen(bfs->pre[0]) + 1);
 		if (rti->curcon == unstarted) rti->start_time = (ulong) time(NULL);
@@ -480,10 +484,10 @@ static int loop(set *s)
 				c = ' ';
 				break;
 			};
-			case 11:	/* Tabulator */
+			case '\t':	/* Tabulator */
 			{
 				endwin();
-				return result(rti);
+				return 1;
 			};
 			case 27:	/* Escape */
 			{
@@ -604,7 +608,7 @@ static int menu()
 	noecho();
 	keypad( w, TRUE );
 	curs_set( 0 );
-	while ( (ch = wgetch(w)) != 'q')
+	while ( (ch = wgetch(w)) != 'q' && ch != '\033')
 	{
 		sprintf(item, "%-7s",  list[i]);
 		wattron(w,COLOR_PAIR(5));
