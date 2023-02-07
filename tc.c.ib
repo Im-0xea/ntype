@@ -83,7 +83,7 @@ ccol colis[16]
 char         dic   [1000][100]
 size_t       dic_s = 0
 char         kmp   [30]
-unsigned int thm   [7]   [3]
+ccol         thm   [7]
 unsigned int gamecounter = 0
 
 
@@ -155,10 +155,11 @@ static void load_thm(const char *path)
 	while (x < 7)
 		char col[10]
 		if (!fgets(col, 10, fp)) break
-		sscanf(col, "#%2x%2x%2x", &thm[x][0], &thm[x][1], &thm[x][2] )
-		thm[x][0] *= ( 1000 / 256 )
-		thm[x][1] *= ( 1000 / 256 )
-		thm[x][2] *= ( 1000 / 256 )
+		unsigned int r, g, b
+		sscanf(col, "#%2x%2x%2x", &r, &g, &b )
+		thm[x].r = r * ( 1000 / 256 )
+		thm[x].g = g * ( 1000 / 256 )
+		thm[x].b = b * ( 1000 / 256 )
 		++x
 	fclose(fp)
 
@@ -231,19 +232,19 @@ static void curses_init()
 	start_color()
 	
 	color_content(1, &colis[0].r, &colis[0].g, &colis[0].b)
-	init_color(1, thm[0][0], thm[0][1], thm[0][2])
+	init_color(1, thm[0].r, thm[0].g, thm[0].b)
 	color_content(2, &colis[1].r, &colis[1].g, &colis[1].b)
-	init_color(2, thm[2][0], thm[2][1], thm[2][2])
+	init_color(2, thm[2].r, thm[2].g, thm[2].b)
 	color_content(3, &colis[2].r, &colis[2].g, &colis[2].b)
-	init_color(3, thm[3][0], thm[3][1], thm[3][2])
+	init_color(3, thm[3].r, thm[3].g, thm[3].b)
 	color_content(4, &colis[3].r, &colis[3].g, &colis[3].b)
-	init_color(4, thm[4][0], thm[4][1], thm[4][2])
+	init_color(4, thm[4].r, thm[4].g, thm[4].b)
 	color_content(5, &colis[4].r, &colis[4].g, &colis[4].b)
-	init_color(5, thm[5][0], thm[5][1], thm[5][2])
+	init_color(5, thm[5].r, thm[5].g, thm[5].b)
 	color_content(6, &colis[5].r, &colis[5].g, &colis[5].b)
-	init_color(6, thm[6][0], thm[6][1], thm[6][2])
+	init_color(6, thm[6].r, thm[6].g, thm[6].b)
 	color_content(7, &colis[6].r, &colis[6].g, &colis[6].b)
-	init_color(7, thm[1][0], thm[1][1], thm[1][2])
+	init_color(7, thm[1].r, thm[1].g, thm[1].b)
 	init_pair(1, 6, 3)
 	init_pair(2, 6, 4)
 	init_pair(3, 1, 6)
@@ -330,7 +331,7 @@ static int result(rt_info *rti)
 	double wpm = (double) 60 * ( (double) (rti->cp / 5) / (double) time_elps)
 	mvwprintw(w, 1, 7 , "Result")
 	mvwprintw(w, 2, 1, "wpm:  %.2f", wpm)
-	mvwprintw(w, 3, 1, "time: %d", time_elps)
+	mvwprintw(w, 3, 1, "time: %ld", time_elps)
 	int ch
 	while ( (ch = wgetch(w)) != '\n')
 	return 1
@@ -456,9 +457,9 @@ static int menu()
 	char list[2][16] =
 		"Local"
 		"Network"
-	char item[10]
+	char item[32]
 	int ch = '\0'
-	int i = 0, width = 7
+	int i = 0
 	w = newwin(10, 20, LINES / 2 - 5, COLS / 2 - 10)
 	box( w, 0, 0 )
 	wbkgd(w, COLOR_PAIR(5))
