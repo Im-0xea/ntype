@@ -405,8 +405,9 @@ static int result(rt_info *rti)
 	wbkgd(w, COLOR_PAIR(5));
 	unsigned long time_elps = (unsigned long) time(NULL) - rti->start_time;
 	double wpm = (double) 60 * ( (double) (rti->cp / 5) / (double) time_elps);
-	mvwprintw(w, 1, 1, "wpm: %.2f", wpm);
-	mvwprintw(w, 2, 1, "time: %d", time_elps);
+	mvwprintw(w, 1, 7 , "Result");
+	mvwprintw(w, 2, 1, "wpm:  %.2f", wpm);
+	mvwprintw(w, 3, 1, "time: %d", time_elps);
 	int ch;
 	while ( (ch = wgetch(w)) != '\n');
 	return 1;
