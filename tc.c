@@ -84,6 +84,16 @@ typedef struct settings
 }
 set;
 
+typedef struct ccolor
+{
+	short r;
+	short g;
+	short b;
+}
+ccol;
+
+ccol colis[16];
+
 char         dic   [1000][100];
 size_t       dic_s = 0;
 char         kmp   [30];
@@ -291,18 +301,38 @@ static void curses_init()
 	noecho();
 	start_color();
 	
+	color_content(1, &colis[0].r, &colis[0].g, &colis[0].b);
 	init_color(1, thm[0][0], thm[0][1], thm[0][2]);
-	init_color(7, thm[1][0], thm[1][1], thm[1][2]);
+	color_content(2, &colis[1].r, &colis[1].g, &colis[1].b);
 	init_color(2, thm[2][0], thm[2][1], thm[2][2]);
+	color_content(3, &colis[2].r, &colis[2].g, &colis[2].b);
 	init_color(3, thm[3][0], thm[3][1], thm[3][2]);
+	color_content(4, &colis[3].r, &colis[3].g, &colis[3].b);
 	init_color(4, thm[4][0], thm[4][1], thm[4][2]);
+	color_content(5, &colis[4].r, &colis[4].g, &colis[4].b);
 	init_color(5, thm[5][0], thm[5][1], thm[5][2]);
+	color_content(6, &colis[5].r, &colis[5].g, &colis[5].b);
 	init_color(6, thm[6][0], thm[6][1], thm[6][2]);
+	color_content(7, &colis[6].r, &colis[6].g, &colis[6].b);
+	init_color(7, thm[1][0], thm[1][1], thm[1][2]);
 	init_pair(1, 6, 3);
 	init_pair(2, 6, 4);
 	init_pair(3, 1, 6);
 	init_pair(4, 6, 7);
 	init_pair(5, 5, 6);
+}
+
+static void deinit_curses()
+{
+	init_color(1, colis[0].r, colis[0].g, colis[0].b);
+	init_color(2, colis[1].r, colis[1].g, colis[1].b);
+	init_color(3, colis[2].r, colis[2].g, colis[2].b);
+	init_color(4, colis[3].r, colis[3].g, colis[3].b);
+	init_color(5, colis[4].r, colis[4].g, colis[4].b);
+	init_color(6, colis[5].r, colis[5].g, colis[5].b);
+	init_color(7, colis[6].r, colis[6].g, colis[6].b);
+	reset_color_pairs();
+	endwin();
 }
 
 static void noreturn quit(rt_info *rti, bool print, char *custom_log)
@@ -487,12 +517,10 @@ static int loop(set *s)
 			};
 			case '\t':	/* Tabulator */
 			{
-				endwin();
 				return 1;
 			};
 			case 27:	/* Escape */
 			{
-				endwin();
 				return result(rti);
 				//quit(rti, true, NULL)
 			};
@@ -640,7 +668,7 @@ static int menu()
 		wattroff(w, COLOR_PAIR(5));
 	}
 	delwin(w);
-	endwin();
+	deinit_curses();
 	return 0;
 }
 
