@@ -259,7 +259,7 @@ static void deinit_curses()
 	init_color(5, colis[4].r, colis[4].g, colis[4].b)
 	init_color(6, colis[5].r, colis[5].g, colis[5].b)
 	init_color(7, colis[6].r, colis[6].g, colis[6].b)
-	reset_color_pairs()
+	//reset_color_pairs()
 	endwin()
 
 static void noreturn quit(rt_info *rti, bool print, char *custom_log)
@@ -539,6 +539,7 @@ static amode long_arg_parser(const char *arg)
 
 static amode short_arg_parser(const char *arg)
 	psize i = 0 
+	char invalid[1]
 	while(arg[i])
 		switch (arg[i])
 			
@@ -549,7 +550,6 @@ static amode short_arg_parser(const char *arg)
 			case 't': return theme
 			
 			default :
-				char invalid[1]
 				invalid[0] = arg[i]
 				
 				warn("invalid option", invalid, 0)
